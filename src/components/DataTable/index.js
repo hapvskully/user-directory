@@ -4,7 +4,8 @@ import API from "../../utils/API";
 class DataTable extends React.Component {
     state = {
         name: "",
-        directory: []
+        directory: [],
+        sortOrder:'descend'
     }
 
     componentDidMount() {
@@ -16,10 +17,57 @@ class DataTable extends React.Component {
             .then(res=> this.setState({ directory: res.data.results }))
     }
 
+     //function to update search state each time the user types a character
+  handleSearchChange = e => {
+    this.setState({ search: e.target.value });
+  };
+
     searchFn = e => {
         console.log(e.target.value)
         this.setState({name: e.target.value})
     }
+
+    sortByFirstName = () => {
+        const sortedemployees = this.state.directory.sort((a,b) => {
+            if (b.name.first > a.name.first) {
+                return  -1
+
+            }
+            if (a.name.first > b.name.first){
+                return 1
+
+            }
+            return 0
+        });
+        if (this.state.sortOrder === "descend") {
+            sortedemployees.reverse()
+            this.setState({ sortOrder: "ascend" })
+        }else {
+            this.setState({ sortOrder: "descend "})
+        }
+        this.setState({ directory: sortedemployees })
+    }
+
+    sortByLasttName = () => {
+        const sortedEmployees = this.state.directory.sort((a,b) => {
+            if (b.name.last > a.name.last) {
+                return -1
+            }
+            if (a.name.last > b.name.last) {
+                return 1
+            }
+            return 0
+        })
+        if (this.state.sortOrder === "descend") {
+            sortedEmployees.reverse();
+            this.setState({ sortOrder: "ascend "});
+        } else {
+            this.setState({ sortOrder: "descend "})
+        }
+        this.setState({ directory: sortedEmployees })
+    }
+
+
     render(){
         return(
             <>
@@ -34,7 +82,7 @@ class DataTable extends React.Component {
                     <thead>
                         <tr>
                         <th scope="col">ID</th>
-                        <th scope="col">Name</th>
+                        <th onClick={this.sortByFirstName}scope="col">Name</th>
                         <th scope="col">Email</th>
                         <th scope="col">Phone</th>
                         </tr>
